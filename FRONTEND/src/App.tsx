@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
-import './App.css';
+import { Provider } from 'react-redux';
 
+import { ThemeProvider } from 'styled-components';
+import GlobalStyles from './GlobalStyles';
+import { BrowserRouter as Router } from 'react-router-dom';
+import store from './redux/store';
 interface Task {
   id: number;
   title: string;
@@ -13,7 +17,7 @@ interface Board {
   tasks: Task[];
 }
 
-function App() {
+const App: React.FC = () => {
   const [boards, setBoards] = useState<Board[]>([
     {
       id: 1,
@@ -84,36 +88,18 @@ function App() {
     e.preventDefault();
   }
 
+
   return (
-    <div className="App">
-      <h1>Kanban Board</h1>
-      <div className="board-container">
-        {boards.map((board) => (
-          <div
-            className="board"
-            key={board.id}
-            onDragOver={(e) => handleDragOver(e, board.id)}
-            onDrop={(e) => handleDrop(e, board.id)}
-          >
-            <h2>{board.title}</h2>
-            <div className="task-list">
-              {board.tasks.map((task) => (
-                <div
-                  className="task"
-                  key={task.id}
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, task)}
-                  onDragEnd={handleDragEnd}
-                >
-                  {task.title}
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+    <Provider store={store} >
+      <ThemeProvider theme={""}>
+        <Router>
+          <GlobalStyles />
+          {/* Rest of your component tree */}
+        </Router>
+      </ThemeProvider>
+    </Provider>
   );
+
 }
 export default App;
 

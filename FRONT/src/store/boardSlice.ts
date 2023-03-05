@@ -7,10 +7,8 @@ import initialBoardState from '../data/initialBoardState.json';
 interface AddCardPayload {
   listId: string;
   title: string;
-}
-interface UpdateCardTitlePayload {
-  cardId: string;
-  title: string;
+  description?: string;
+
 }
 
 const boardSlice = createSlice({
@@ -67,12 +65,14 @@ const boardSlice = createSlice({
       state.lists.unshift(action.payload);
     },
     addCard: (state, action: PayloadAction<AddCardPayload>) => {
-      const { listId, title } = action.payload;
+      const { listId, title,description } = action.payload;
       const newCard: Card = {
         id: String(Date.now()),
         title: title,
-        listId: listId, 
-        labels: [], // add the listId property
+        listId: listId,
+        description: description ? description : '',
+  
+
       };
       const listIndex = state.lists.findIndex((list) => list.id === listId);
       state.lists[listIndex].cards.push(newCard);
@@ -85,6 +85,6 @@ const boardSlice = createSlice({
   },
 });
 
-export const { moveList, moveCard, addList, addCard, removeList,} = boardSlice.actions;
+export const { moveList, moveCard, addList, addCard, removeList, } = boardSlice.actions;
 
 export default boardSlice.reducer;

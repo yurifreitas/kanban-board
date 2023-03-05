@@ -1,15 +1,11 @@
 // types.ts
-export interface Label {
-  id: string;
-  title: string;
-  color: string;
 
-}
 export interface Card {
   id: string;
   title: string;
   listId: string;
-  labels: Label[];
+  description: string;
+
 }
 
 export interface List {

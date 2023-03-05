@@ -1,9 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Card } from '../types';
 
-interface UpdateCardTitlePayload {
+interface UpdateCardPayload {
   cardId: string;
   title: string;
+  description?: string;
 }
 
 interface RemoveCardPayload {
@@ -11,41 +12,30 @@ interface RemoveCardPayload {
   listId: string;
 }
 
-interface AddCardPayload {
-  listId: string;
-  title: string;
-}
-
 interface CardState {
   entities: Record<string, Card>;
   ids: string[];
+  lists: [];
 }
 
 const initialCardState: CardState = {
   entities: {},
   ids: [],
+  lists: [],
 };
 
 const cardSlice = createSlice({
   name: 'cards',
   initialState: initialCardState,
   reducers: {
-    addCard: (state, action: PayloadAction<AddCardPayload>) => {
-      const { listId, title } = action.payload;
-      const newCard: Card = {
-        id: String(Date.now()),
-        title,
-        listId,
-        labels:[],
-      };
-      state.entities[newCard.id] = newCard;
-      state.ids.push(newCard.id);
-    },
-    updateCardTitle: (state, action: PayloadAction<UpdateCardTitlePayload>) => {
-      const { cardId, title } = action.payload;
+    updateCardTitle: (state, action: PayloadAction<UpdateCardPayload>) => {
+      const { cardId, title, description } = action.payload;
       const card = state.entities[cardId];
       if (card) {
         card.title = title;
+        if (description !== undefined) {
+          card.description = description;
+        }
       }
     },
     removeCard: (state, action: PayloadAction<RemoveCardPayload>) => {
@@ -61,6 +51,6 @@ const cardSlice = createSlice({
   },
 });
 
-export const { addCard, updateCardTitle, removeCard } = cardSlice.actions;
+export const { updateCardTitle, removeCard } = cardSlice.actions;
 
 export default cardSlice.reducer;

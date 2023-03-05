@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Draggable, DraggableProvided } from 'react-beautiful-dnd';
 import { useDispatch } from 'react-redux';
 import { removeCard, updateCardTitle } from '../store/cardSlice';
-import { Card as CardType, Label as LabelType } from '../types';
-import { CardsContainer, AddCardButton, FooterContainer, Card, CardDetails, CardTitle, EditCardTitleInput, CardFooter, CardButton, Label } from '../styles/styles';
+import { Card as CardType } from '../types';
+import { CardsContainer, Card, CardDetails, CardTitle, EditCardTitleInput, CardFooter, CardButton, CardDescription } from '../styles/styles';
+import ReactMarkdown from 'react-markdown';
 
 interface Props {
   card: CardType;
@@ -14,10 +15,11 @@ interface Props {
 const CardComponent: React.FC<Props> = ({ card, index, isFirstList }) => {
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState(card.title);
+  const [description, setDescription] = useState(card.description);
   const dispatch = useDispatch();
 
   const handleSaveCard = () => {
-    dispatch(updateCardTitle({ cardId: card.id, title }));
+    dispatch(updateCardTitle({ cardId: card.id, title, description }));
     setShowForm(false);
   };
 
@@ -27,27 +29,48 @@ const CardComponent: React.FC<Props> = ({ card, index, isFirstList }) => {
 
   return (
     <Draggable draggableId={card.id} index={index}>
-      {(provided: DraggableProvided) => (
+      {(provided: DraggableProvided, snapshot) => (
         <CardsContainer>
-          <Card ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} isDragging={provided.dragging}>
+          <Card
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            isDragging={snapshot.isDragging}
+          >
             {showForm ? (
               <div className="card-form">
-                <EditCardTitleInput type="text" value={title} onChange={(e) => setTitle(e.target.value)} onBlur={handleSaveCard} autoFocus />
-                <button onClick={handleSaveCard}>Save</button>
-                <button onClick={() => setShowForm(false)}>X</button>
+                <EditCardTitleInput
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  onBlur={handleSaveCard}
+                  autoFocus
+                />
+                <textarea
+                  className="card-form-textarea"
+                  placeholder="Enter a description for this card..."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+                <div className="card-form-buttons">
+                  <button className="card-form-button" onClick={handleSaveCard}>Save</button>
+                  <button className="card-form-button" onClick={() => setShowForm(false)}>Cancel</button>
+                </div>
               </div>
             ) : (
               <CardDetails onClick={() => setShowForm(true)}>
                 <CardTitle>{card.title}</CardTitle>
-                {card.labels?.map((label: LabelType) => (
-                  <Label key={label.id} labelColor={label.color}>{label.title}</Label>
-                ))}
+                <CardDescription>
+                  <ReactMarkdown>{card.description ? card.description : ''}</ReactMarkdown>
+                </CardDescription>
               </CardDetails>
             )}
             {!isFirstList && (
               <CardFooter>
-                <CardButton className="card-edit" onClick={() => setShowForm(true)}>Edit</CardButton>
-                <CardButton className="card-delete" onClick={handleDeleteCard}>Delete</CardButton>
+                <CardButton onClick={() => setShowForm(true)}>Edit</CardButton>
+                <CardButton onClick={handleDeleteCard} labelColor="red">
+                  Delete
+                </CardButton>
               </CardFooter>
             )}
           </Card>

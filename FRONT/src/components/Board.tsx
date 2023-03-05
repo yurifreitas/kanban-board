@@ -6,7 +6,7 @@ import { Board } from '../types';
 import { moveList, moveCard } from '../store/boardSlice';
 import List from './List';
 import AddCard from './AddCard';
-import { BoardContainer, ListContainer, ListTitle, CardsContainer, AddCardButton, FooterContainer } from '../styles/styles';
+import { BoardContainer, ListContainer, FooterContainer } from '../styles/styles';
 
 
 
@@ -77,9 +77,9 @@ const BoardComponent: React.FC = () => {
 
             {index === 0 && (
               <FooterContainer>
-                <AddCardButton isFirstList={true}>
-                  <AddCard list={list} />
-                </AddCardButton>
+
+                <AddCard list={list} />
+
               </FooterContainer>
             )}
 

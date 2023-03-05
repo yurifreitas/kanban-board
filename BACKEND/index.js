@@ -1,14 +1,11 @@
-import express from 'express';
-import { v4 as uuidv4 } from 'uuid';
+const express = require('express');
 
-interface Card {
-  id: string;
-  titulo: string;
-  conteudo: string;
-  lista: string;
-}
+const { v4: uuidv4 } = require('uuid');
 
-const cards: Card[] = [
+
+
+
+const cards = [
   { id: uuidv4(), titulo: 'Card 1', conteudo: 'Conteudo do card 1', lista: 'Lista 1' },
   { id: uuidv4(), titulo: 'Card 2', conteudo: 'Conteudo do card 2', lista: 'Lista 2' },
   { id: uuidv4(), titulo: 'Card 3', conteudo: 'Conteudo do card 3', lista: 'Lista 3' },
@@ -30,7 +27,7 @@ app.get('/cards', (req, res) => {
 // Endpoint to create a new card
 app.post('/cards', (req, res) => {
   const { titulo, conteudo, lista } = req.body;
-  const newCard: Card = { id: uuidv4(), titulo, conteudo, lista };
+  const newCard = { id: uuidv4(), titulo, conteudo, lista };
   cards.push(newCard);
   res.send(newCard);
 });

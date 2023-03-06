@@ -1,40 +1,43 @@
-import React from 'react';
-import { Droppable } from 'react-beautiful-dnd';
-import { List as ListType } from '../types';
-import CardComponent from './Card';
-import AddCard from './AddCard';
-import { BoardContainer, ListContainer, ListTitle } from '../styles/styles';
+  import React from 'react';
+  import { Droppable } from 'react-beautiful-dnd';
+  import { List as ListType } from '../types';
+  import CardComponent from './Card';
+  import AddCard from './AddCard';
+  import { BoardInnerContainer, ListTitle } from '../styles/BoardStyles'
 
-interface Props {
-  list: ListType;
-  index: number;
-}
+  interface Props {
+    list: ListType;
+    index: number;
+  }
 
-const List: React.FC<Props> = ({ list, index }) => {
+  const List: React.FC<Props> = ({ list, index }) => {
 
-  const isFirstList = index === 0;
+    const isFirstList = index === 0;
+    const isLastCard = index === 3;
 
-  return (
-    <Droppable droppableId={list.id}>
-      {(provided) => (
+    return (
+      <Droppable droppableId={list.id}>
+        {(provided) => (
 
-        <div ref={provided.innerRef} {...provided.droppableProps}>
-          <ListTitle>{list.title}</ListTitle>
-          {list.cards.map((card, index) => (
-            <CardComponent
-              key={card.id}
-              card={card}
-              index={index}
-              isFirstList={isFirstList}
-            />
-          ))}
-          {provided.placeholder}
+          <BoardInnerContainer ref={provided.innerRef} {...provided.droppableProps}>
+            <ListTitle>{list.title}</ListTitle>
+            {list.cards.map((card, index) => (
+              <CardComponent
+                listId={list.id}
+                key={card.id}
+                card={card}
+                index={index}
+                isFirstList={isFirstList}
+                isLastCard={isLastCard }
+              />
+            ))}
+            {provided.placeholder}
 
-        </div>
+          </BoardInnerContainer>
 
-      )}
-    </Droppable>
-  );
-};
+        )}
+      </Droppable>
+    );
+  };
 
-export default List;
+  export default List;

@@ -1,80 +1,121 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Draggable, DraggableProvided } from 'react-beautiful-dnd';
 import { useDispatch } from 'react-redux';
-import { removeCard, updateCardTitle } from '../store/cardSlice';
+import { removeCard, updateCard, } from '../store/cardSlice';
 import { Card as CardType } from '../types';
-import { CardsContainer, Card, CardDetails, CardTitle, EditCardTitleInput, CardFooter, CardButton, CardDescription } from '../styles/styles';
+import { Card, CardDetails, CardTitle, CardFooter, CardButton, CardDescription, DeleteButton, EditButton } from '../styles/CardStyles';
 import ReactMarkdown from 'react-markdown';
 
+import {
+  CardFormContainer,
+  CardFormTitleInput,
+  CardFormTextarea,
+  CardFormButton,
+  CardFormIcon,
+} from '../styles/CardFormStyles';
+import { AiOutlineDelete, AiOutlineClose} from 'react-icons/ai';
+import { FaSave } from 'react-icons/fa';
 interface Props {
   card: CardType;
+  listId: string;
   index: number;
   isFirstList: boolean;
+  isLastCard: boolean;
 }
 
-const CardComponent: React.FC<Props> = ({ card, index, isFirstList }) => {
+const CardComponent: React.FC<Props> = ({ listId, card, index, isFirstList, isLastCard }) => {
   const [showForm, setShowForm] = useState(false);
-  const [title, setTitle] = useState(card.title);
-  const [description, setDescription] = useState(card.description);
+  const [cardState, setCardState] = useState({ title: card.title, description: card.description })
+  const [isVisible, setIsVisible] = useState(true); // add isVisible state
   const dispatch = useDispatch();
 
+
   const handleSaveCard = () => {
-    dispatch(updateCardTitle({ cardId: card.id, title, description }));
+    dispatch(updateCard({ cardId: card.id, newCard: { ...cardState, id: card.id, listId: card.listId } }));
     setShowForm(false);
   };
 
   const handleDeleteCard = () => {
-    dispatch(removeCard({ cardId: card.id, listId: card.listId }));
+    dispatch(removeCard({ cardId: card.id, listId: listId }));
+    setIsVisible(false); // hide card when delete button is clicked
   };
+
+  // render null when card is not visible
+  if (!isVisible) {
+    return null;
+  }
 
   return (
     <Draggable draggableId={card.id} index={index}>
       {(provided: DraggableProvided, snapshot) => (
-        <CardsContainer>
-          <Card
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-            isDragging={snapshot.isDragging}
-          >
-            {showForm ? (
-              <div className="card-form">
-                <EditCardTitleInput
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  onBlur={handleSaveCard}
-                  autoFocus
-                />
-                <textarea
-                  className="card-form-textarea"
-                  placeholder="Enter a description for this card..."
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-                <div className="card-form-buttons">
-                  <button className="card-form-button" onClick={handleSaveCard}>Save</button>
-                  <button className="card-form-button" onClick={() => setShowForm(false)}>Cancel</button>
-                </div>
-              </div>
-            ) : (
-              <CardDetails onClick={() => setShowForm(true)}>
-                <CardTitle>{card.title}</CardTitle>
-                <CardDescription>
-                  <ReactMarkdown>{card.description ? card.description : ''}</ReactMarkdown>
-                </CardDescription>
-              </CardDetails>
-            )}
-            {!isFirstList && (
-              <CardFooter>
-                <CardButton onClick={() => setShowForm(true)}>Edit</CardButton>
-                <CardButton onClick={handleDeleteCard} labelColor="red">
-                  Delete
-                </CardButton>
-              </CardFooter>
-            )}
-          </Card>
-        </CardsContainer>
+
+        <Card
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          isDragging={snapshot.isDragging}
+        >
+          {showForm ? (
+            <CardFormContainer>
+              <CardFormTitleInput
+                type="text"
+                value={cardState.title}
+                onChange={(e) => setCardState({ ...cardState, title: e.target.value })}
+                autoFocus
+                placeholder="Enter a title for this card..."
+              />
+              <CardFormTextarea
+                placeholder="Enter a description for this card..."
+                value={cardState.description}
+                onChange={(e) => setCardState({ ...cardState, description: e.target.value })}
+              />
+
+            </CardFormContainer>
+          ) : (
+            <CardDetails onClick={() => setShowForm(true)}>
+              <CardTitle>{cardState.title}
+                {(!isFirstList && !showForm && !isLastCard) && (
+                  <>
+                    <DeleteButton onClick={handleDeleteCard}>
+                      <AiOutlineDelete />
+
+                    </DeleteButton>
+                  </>
+                )}
+              </CardTitle>
+              <CardDescription>
+                <ReactMarkdown>{cardState.description ? cardState.description : ''}</ReactMarkdown>
+              </CardDescription>
+            </CardDetails>
+          )}
+          {!isFirstList && (
+            <CardFooter>
+              {showForm && (
+                <CardFormButton>
+
+
+                  <CardFormIcon onClick={handleSaveCard}><FaSave /></CardFormIcon>
+                  <DeleteButton onClick={() => setShowForm(false)}>
+                    <AiOutlineClose />
+
+                  </DeleteButton>
+
+                </CardFormButton>
+              )}
+              {!showForm && (
+                <>
+                  <EditButton onClick={() => setShowForm(true)}>Edit</EditButton>
+                </>
+              )}
+              {isLastCard && (
+                <CardButton onClick={() => setShowForm(true)}>Save</CardButton>
+              )
+              }
+
+            </CardFooter>
+          )}
+        </Card>
+
       )}
     </Draggable>
   );

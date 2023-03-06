@@ -2,8 +2,16 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addCard } from '../store/boardSlice';
 import { List as ListType } from '../types';
-import { BoardContainer, ListContainer, ListTitle, CardsContainer, AddCardButton, FooterContainer } from '../styles/styles';
-
+import { AddCardButton } from '../styles/CardStyles';
+import {
+  CardFormContainer,
+  ButtonContainer,
+  CancelButton,
+  CardFormInput
+} from '../styles/CardFormStyles';
+import { AiOutlineDelete, AiOutlineClose } from 'react-icons/ai';
+import { AddButton } from '../styles/CardFormStyles';
+import { FaSave } from 'react-icons/fa';
 interface Props {
   list: ListType;
 }
@@ -26,18 +34,23 @@ const AddCard: React.FC<Props> = ({ list }) => {
   return (
     <div>
       {showForm ? (
-        <form onSubmit={handleAddCard}>
-          <input
+        <CardFormContainer onSubmit={handleAddCard}>
+
+          <CardFormInput
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter card title"
-          />
-          <button type="submit">Add Card</button>
-          <button onClick={() => setShowForm(false)}>X</button>
-        </form>
+            placeholder="Insira o titulo para seu card"
+          />< ButtonContainer>
+            < AddButton type="submit"> <FaSave /> Salvar</ AddButton>
+            <CancelButton onClick={() => setShowForm(false)}>
+              <AiOutlineClose />
+
+            </ CancelButton>
+          </ButtonContainer>
+        </CardFormContainer>
       ) : (
-        <AddCardButton onClick={() => setShowForm(true)}>+ Add Card</AddCardButton>
+        <AddCardButton onClick={() => setShowForm(true)}><FaSave /> </AddCardButton>
       )}
     </div>
   );

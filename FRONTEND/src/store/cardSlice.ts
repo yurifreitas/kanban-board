@@ -1,56 +1,46 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Card } from '../types';
-
-interface UpdateCardPayload {
-  cardId: string;
-  title: string;
-  description?: string;
-}
-
+import { Card, List } from '../types';
+import initialBoardState from '../data/initialBoardState.json';
+import produce from 'immer';
 interface RemoveCardPayload {
   cardId: string;
   listId: string;
 }
 
-interface CardState {
-  entities: Record<string, Card>;
-  ids: string[];
-  lists: [];
-}
-
-const initialCardState: CardState = {
-  entities: {},
-  ids: [],
-  lists: [],
-};
 
 const cardSlice = createSlice({
   name: 'cards',
-  initialState: initialCardState,
+  initialState: initialBoardState,
   reducers: {
-    updateCardTitle: (state, action: PayloadAction<UpdateCardPayload>) => {
-      const { cardId, title, description } = action.payload;
-      const card = state.entities[cardId];
-      if (card) {
-        card.title = title;
-        if (description !== undefined) {
-          card.description = description;
+    updateCard: (state, action: PayloadAction<{ cardId: string, newCard: Card }>) => {
+      const { cardId, newCard } = action.payload;
+      state.lists.forEach(list => {
+        const cardIndex = list.cards.findIndex(card => card.id === cardId);
+        if (cardIndex !== -1) {
+          list.cards[cardIndex] = newCard;
         }
-      }
+
+      });
+      return state;
     },
     removeCard: (state, action: PayloadAction<RemoveCardPayload>) => {
       const { cardId, listId } = action.payload;
-      const cardIndex = state.ids.findIndex((id) => id === cardId);
-      if (cardIndex === -1) {
-        console.error(`Card with id ${cardId} not found`);
-        return;
+      
+      const listIndex = state.lists.findIndex((list) => list.id === listId);
+    
+      if (listIndex !== -1) {
+        const cards = state.lists[listIndex].cards.filter(card => card.id !== cardId);
+        state.lists[listIndex].cards = cards;
       }
-      delete state.entities[cardId];
-      state.ids.splice(cardIndex, 1);
+    
+      // Return the entire state object, not just the lists array
+      return state;
     },
+
+
   },
 });
 
-export const { updateCardTitle, removeCard } = cardSlice.actions;
+export const { removeCard, updateCard} = cardSlice.actions;
 
 export default cardSlice.reducer;

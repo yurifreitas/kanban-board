@@ -6,7 +6,7 @@ import { Board } from '../types';
 import { moveList, moveCard } from '../store/boardSlice';
 import List from './List';
 import AddCard from './AddCard';
-import { BoardContainer, ListContainer, FooterContainer } from '../styles/styles';
+import { BoardContainer, ListContainer, FooterContainer } from '../styles/BoardStyles';
 
 
 

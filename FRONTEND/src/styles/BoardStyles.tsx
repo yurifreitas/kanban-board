@@ -13,6 +13,7 @@ export const BoardContainer = styled.div`
 `;
 
 export const BoardInnerContainer = styled.div`
+overflow: auto;
   height: 100vh;
   background-color: white;
   font-family: Quicksand, arial, sans-serif;

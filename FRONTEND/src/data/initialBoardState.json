@@ -6,6 +6,13 @@
       "id": "list-1",
       "title": "Novo",
       "cards": [
+      
+      ]
+    },
+    {
+      "id": "list-2",
+      "title": "To Do",
+      "cards": [
         {
           "id": "card-1",
           "title": "Task 1",
@@ -15,13 +22,7 @@
           "id": "card-2",
           "title": "Task 2",
           "description": "Task 4"
-        }
-      ]
-    },
-    {
-      "id": "list-2",
-      "title": "To Do",
-      "cards": [
+        },
         {
           "id": "card-3",
           "title": "Task 3",

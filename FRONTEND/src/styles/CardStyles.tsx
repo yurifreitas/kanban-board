@@ -97,7 +97,7 @@ export const DeleteButton = styled.button`
   }
 `;
 export const CardButton = styled.button`
-background-color: #ff4d4d;
+background-color: green;
 color: #fff;
 padding: 6px 12px;
 border: none;

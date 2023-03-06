@@ -102,13 +102,13 @@ const CardComponent: React.FC<Props> = ({ listId, card, index, isFirstList, isLa
 
                 </CardFormButton>
               )}
-              {!showForm && (
+              {(!showForm && !isLastCard )&& (
                 <>
                   <EditButton onClick={() => setShowForm(true)}>Edit</EditButton>
                 </>
               )}
               {isLastCard && (
-                <CardButton onClick={() => setShowForm(true)}>Save</CardButton>
+                <CardButton>Save</CardButton>
               )
               }
 
